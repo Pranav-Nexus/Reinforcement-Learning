@@ -13,7 +13,7 @@ from utils import *
 
 env = tictactoe.Game(debug=False)
 
-max_episodes = 1000
+max_episodes = 7111
 
 win = 0
 loss = 0

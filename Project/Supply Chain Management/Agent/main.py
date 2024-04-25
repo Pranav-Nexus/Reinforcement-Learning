@@ -11,13 +11,17 @@ def main(algorithm="TD3", train=False, timesteps=5e5, filename=None, num_episode
     print("Creating Agent...")
 
     if train:
-        if algorithm == "TD3":
-            agent = train_td3(timesteps, net_architecture=[300, 400])
-        elif algorithm == "DDPG":
-            agent = train_ddpg(timesteps)
-        else:
-            print("Invalid Algorithm Entered")
-            return
+        if algorithm == "all":
+            td3_agent = train_td3(timesteps, net_architecture=[300, 400])
+            ddpg_agent = train_ddpg(timesteps)
+        else :
+            if algorithm == "TD3":
+                agent = train_td3(timesteps, net_architecture=[300, 400])
+            elif algorithm == "DDPG":
+                agent = train_ddpg(timesteps)
+            else:
+                print("Invalid Algorithm Entered")
+                return
 
     else:
         if algorithm == "TD3":

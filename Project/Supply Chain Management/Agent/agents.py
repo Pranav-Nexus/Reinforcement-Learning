@@ -16,7 +16,7 @@ from environment import SimpleSupplyChain
 def make_policy(net_architecture=[512, 512]):
     policy = MlpPolicy(observation_space=SimpleSupplyChain.observation_space,
                        action_space=SimpleSupplyChain.action_space,
-                       lr_schedule=0.001,
+                       lr_schedule=0.1,
                        net_arch=net_architecture)
 
     return policy
@@ -41,8 +41,8 @@ def train_td3(timesteps=5e5, net_architecture=None):
         policy_kwargs = {}
 
     agent = TD3(policy="MlpPolicy", env=env,
-                action_noise=action_noise, policy_kwargs=policy_kwargs,
-                verbose=1, tensorboard_log="./tensorboard/TD3")
+                 action_noise=action_noise, policy_kwargs=policy_kwargs,
+                 verbose=1, tensorboard_log="./tensorboard/TD3")
 
     print("Starting Model Training...")
     agent.learn(total_timesteps=timesteps, log_interval=10)
@@ -87,7 +87,7 @@ def load_ddpg(file_name):
     return agent
 
 
-def test_agent(agent, log=False, num_episodes=10):
+def test_agent(agent1, agent2, log=False, num_episodes=10):
     env = SimpleSupplyChain()
 
     total_rewards = []
@@ -101,24 +101,5 @@ def test_agent(agent, log=False, num_episodes=10):
         t = 0
 
         while not done:
-            action, _states = agent.predict(obs)
-            obs, reward, done, info = env.step(action)
-
-            total_reward += reward
-
-            if log:
-                transitions.append(
-                    [episode, t, obs[0], obs[1], obs[2], *action, reward, total_reward])
-            t += 1
-
-        total_rewards.append(total_reward)
-
-    if log:
-        df = pd.DataFrame(transitions, columns=['episode', 't', 'factory_stock', 'warehouse_stock_0', 'warehouse_stock_1',
-                                                'production_level', 'shipping_to_warehouse_0', 'shipping_to_warehouse_1', 'timestep_reward', 'total_reward'])
-        df.to_csv(
-            f"transitions_{num_episodes}_{int(time.time())}.csv", index=False)
-
-    mean_reward = np.mean(total_rewards)
-    return mean_reward, total_rewards, num_episodes
-
+            action1, _states1 = agent1.predict(obs)
+            action2, _states2 = agent2.predict(obs)
